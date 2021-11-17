@@ -49,6 +49,7 @@ public class UserResource {
     @Path("/deleteById/{id}")
     public void deleteById(@PathParam("id") Long id){
         userRepository.deleteById(id);
+
     }
 
     @Transactional
