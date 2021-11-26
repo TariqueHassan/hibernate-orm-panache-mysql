@@ -2,6 +2,8 @@ package org.acme;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
+import io.smallrye.mutiny.Uni;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -24,7 +26,22 @@ public class UserResource {
 
     @GET
     public Response getAllUsers(){
-        return Response.ok(userRepository.listAll()).build();
+        try {
+            List<User> users = userRepository.listAll();
+            ResponseC responseC = new ResponseC();
+            responseC.setData(users);
+            responseC.setError("no error");
+            responseC.setStatus("00");
+            responseC.setMsg("success");
+            return Response.ok(new Gson().toJson(responseC)).build();
+        }catch (Exception e){
+            ResponseC responseC = new ResponseC();
+            responseC.setData(null);
+            responseC.setError("error");
+            responseC.setStatus("99");
+            responseC.setMsg("failure");
+            return Response.ok(new Gson().toJson(responseC)).build();
+        }
     }
 
     @GET
