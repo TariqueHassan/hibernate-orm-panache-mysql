@@ -9,6 +9,8 @@ import org.jboss.logging.Logger;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -78,12 +80,18 @@ public class UserResource {
 
     @Transactional
     @POST
-    public Response create(User user) {
+    public Response create(User user, @Context HttpHeaders headers) {
+        String connection = headers.getRequestHeader("Connection").get(0);
+        String userAgent = headers.getRequestHeader("User-Agent").get(0);
+        String accept = headers.getRequestHeader("Accept").get(0);
+        String host = headers.getRequestHeader("Host").get(0);
+
         if (user.getId() != null)
             throw new WebApplicationException("ID was invalidly set!", 422);
         userRepository.persist(user);
 
-        return Response.ok(user).status(201).build();
+        return Response.ok("Host: "+host + " Connection: "+connection+ " User-Agent: "+userAgent+ " Accept: "+accept).status(201).build();
+//        return Response.ok(user).status(201).build();
     }
 
 }
